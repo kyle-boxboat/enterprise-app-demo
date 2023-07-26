@@ -1,0 +1,36 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: orders
+    name: orders
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            move2kube.konveyor.io/service: orders
+    strategy: {}
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                move2kube.konveyor.io/service: orders
+            name: orders
+        spec:
+            containers:
+                - image: quay.io/parodos/orders:latest
+                  imagePullPolicy: Always
+                  name: orders
+                  ports:
+                    - containerPort: 8080
+                  resources: {}
+            imagePullSecrets:
+                - name: parodosSecret
+            restartPolicy: Always
+            securityContext: {}
+status: {}
+
+...

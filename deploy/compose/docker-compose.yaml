@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  customers:
+    container_name: customers
+    image: quay.io/parodos/customers:latest
+    ports:
+      - target: 8080
+        published: 8080
+  gateway:
+    container_name: gateway
+    image: quay.io/parodos/gateway:latest
+    ports:
+      - target: 8080
+        published: 8082
+  inventory:
+    container_name: inventory
+    image: quay.io/parodos/inventory:latest
+    ports:
+      - target: 8080
+        published: 8083
+  orders:
+    container_name: orders
+    image: quay.io/parodos/orders:latest
+    ports:
+      - target: 8080
+        published: 8081

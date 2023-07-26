@@ -1,0 +1,36 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    creationTimestamp: null
+    labels:
+        move2kube.konveyor.io/service: gateway
+    name: gateway
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            move2kube.konveyor.io/service: gateway
+    strategy: {}
+    template:
+        metadata:
+            creationTimestamp: null
+            labels:
+                move2kube.konveyor.io/service: gateway
+            name: gateway
+        spec:
+            containers:
+                - image: quay.io/parodos/gateway:latest
+                  imagePullPolicy: Always
+                  name: gateway
+                  ports:
+                    - containerPort: 8080
+                  resources: {}
+            imagePullSecrets:
+                - name: parodosSecret
+            restartPolicy: Always
+            securityContext: {}
+status: {}
+
+...

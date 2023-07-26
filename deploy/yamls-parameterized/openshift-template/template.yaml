@@ -1,0 +1,261 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: wf--e89c4717-template
+  generatename: ""
+  namespace: ""
+  selflink: ""
+  uid: ""
+  resourceversion: ""
+  generation: 0
+  creationtimestamp: "0001-01-01T00:00:00Z"
+  deletiontimestamp: null
+  deletiongraceperiodseconds: null
+  labels: {}
+  annotations: {}
+  ownerreferences: []
+  finalizers: []
+  clustername: ""
+  managedfields: []
+objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: inventory
+      name: inventory
+    spec:
+      ports:
+        - name: port-8080
+          port: 8080
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: inventory
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: orders
+      name: orders
+    spec:
+      ports:
+        - name: port-8080
+          port: 8080
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: orders
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: wf--e89c4717
+      name: wf--e89c4717
+    spec:
+      rules:
+        - host: localhost
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: inventory
+                    port:
+                      name: port-8080
+                path: /inventory
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: customers
+                    port:
+                      name: port-8080
+                path: /customers
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: orders
+                    port:
+                      name: port-8080
+                path: /orders
+                pathType: Prefix
+              - backend:
+                  service:
+                    name: gateway
+                    port:
+                      name: port-8080
+                path: /gateway
+                pathType: Prefix
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: customers
+      name: customers
+    spec:
+      replicas: ${{COMMON_REPLICAS}}
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: customers
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: customers
+          name: customers
+        spec:
+          containers:
+            - image: quay.io/parodos/customers:latest
+              imagePullPolicy: Always
+              name: customers
+              ports:
+                - containerPort: 8080
+              resources: {}
+          imagePullSecrets:
+            - name: parodosSecret
+          restartPolicy: Always
+          securityContext: {}
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: gateway
+      name: gateway
+    spec:
+      replicas: ${{COMMON_REPLICAS}}
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: gateway
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: gateway
+          name: gateway
+        spec:
+          containers:
+            - image: quay.io/parodos/gateway:latest
+              imagePullPolicy: Always
+              name: gateway
+              ports:
+                - containerPort: 8080
+              resources: {}
+          imagePullSecrets:
+            - name: parodosSecret
+          restartPolicy: Always
+          securityContext: {}
+    status: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: gateway
+      name: gateway
+    spec:
+      ports:
+        - name: port-8080
+          port: 8080
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: gateway
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: inventory
+      name: inventory
+    spec:
+      replicas: ${{COMMON_REPLICAS}}
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: inventory
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: inventory
+          name: inventory
+        spec:
+          containers:
+            - image: quay.io/parodos/inventory:latest
+              imagePullPolicy: Always
+              name: inventory
+              ports:
+                - containerPort: 8080
+              resources: {}
+          imagePullSecrets:
+            - name: parodosSecret
+          restartPolicy: Always
+          securityContext: {}
+    status: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: customers
+      name: customers
+    spec:
+      ports:
+        - name: port-8080
+          port: 8080
+          targetPort: 8080
+      selector:
+        move2kube.konveyor.io/service: customers
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: orders
+      name: orders
+    spec:
+      replicas: ${{COMMON_REPLICAS}}
+      selector:
+        matchLabels:
+          move2kube.konveyor.io/service: orders
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            move2kube.konveyor.io/service: orders
+          name: orders
+        spec:
+          containers:
+            - image: quay.io/parodos/orders:latest
+              imagePullPolicy: Always
+              name: orders
+              ports:
+                - containerPort: 8080
+              resources: {}
+          imagePullSecrets:
+            - name: parodosSecret
+          restartPolicy: Always
+          securityContext: {}
+    status: {}
+parameters:
+  - name: COMMON_REPLICAS
+    value: "2"

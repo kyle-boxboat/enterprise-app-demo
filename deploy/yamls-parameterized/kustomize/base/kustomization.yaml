@@ -1,0 +1,10 @@
+resources:
+  - customers-deployment.yaml
+  - gateway-deployment.yaml
+  - gateway-service.yaml
+  - inventory-deployment.yaml
+  - inventory-service.yaml
+  - orders-service.yaml
+  - wf--e89c4717-ingress.yaml
+  - customers-service.yaml
+  - orders-deployment.yaml
